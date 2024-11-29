@@ -13,7 +13,9 @@
 ```python -m pip install requirements.txt```
 
 ## Configure the script
-1. Edit Username and Password in main.py
+1. Open main.py
+2. Change pmgApiUrl to your PMG Instance
+3. Edit Username and Password
 
 ## Optional: Add self signed root certificate
 1. Put your Root Certificate into the project folder

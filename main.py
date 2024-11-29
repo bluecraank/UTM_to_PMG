@@ -7,9 +7,9 @@ import xml.etree.ElementTree as ET
 import requests
 
 # Configuration
-pmgApiUrl = 'https://pmg.doepke.local:8006'
+pmgApiUrl = 'https://pmg.example.local:8006'
 
-# Please provie root@pam credentials
+# Please provide root@pam credentials
 pmgApiUser = 'root@pam'
 pmgApiPassword = 'YOUR_PASSWORD'
 
