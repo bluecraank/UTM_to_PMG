@@ -10,7 +10,7 @@
 7. Rename to "data.xml"
 
 ## Install python and requirements
-```python -m pip install requirements.txt```
+```python3 -m pip install requirements.txt```
 
 ## Configure the script
 1. Open main.py
