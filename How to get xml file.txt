@@ -1,7 +1,0 @@
-1. Go to Sophos UTM Admin Portal
-2. Go to Support
-3. Go to Printable Configuration
-4. Generate Report now
-5. Scroll down and click on "in Confd format"
-6. Right click page and save to Project Folder
-7. Rename to "data.xml"
