@@ -1,4 +1,5 @@
 # Migrate your Mail White and Blacklists from Sophos UTM to Proxmox Mail Gateway
+## And or add custom entries for mail address manually
 
 ## Export XML file
 1. Go to Sophos UTM Admin Portal
@@ -10,16 +11,12 @@
 7. Rename to "data.xml"
 
 ## Install python and requirements
-```python3 -m pip install requirements.txt```
+```python3 -m pip install -r requirements.txt```
 
-## Configure the script
-1. Open main.py
-2. Change pmgApiUrl to your PMG Instance
-3. Edit Username and Password
+## Start script
+Linux: ```python3 main.py```
+Windows: Execute Start.bat
 
 ## Optional: Add self signed root certificate
 1. Put your Root Certificate into the project folder
-2. Rename it or change the certificatePath in main.py
-
-# Run script
-```python3 main.py```
+2. Provide the file name if script is asking for
