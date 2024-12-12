@@ -1,20 +1,25 @@
 # Author : Nils Fischer
 # Context: Migrate Sophos UTM Mail Protection to Proxmox Mail Gateway
 # Description: This script will migrate the whitelist and blacklist from Sophos UTM to Proxmox Mail Gateway
-# Version: 1.0
+# Version: 1.1
 import os
 import xml.etree.ElementTree as ET
 import requests
 
 # Configuration
-pmgApiUrl = 'https://pmg.example.local:8006'
+pmgApiUrl = input("Enter the URL of your PMG API (https://pmg.example.com:8006): ")
 
 # Please provide root@pam credentials
 pmgApiUser = 'root@pam'
-pmgApiPassword = 'YOUR_PASSWORD'
+pmgApiPassword = input("Enter the password for root@pam: ")
+
 
 # Please provide your self signed certificate, so ssl verification can be done
-certificatePath = 'SelfSigned.crt'
+providedCertificate = input("Please provide your selfsigned certificate or leave empty if not use (SelfSigned.crt): ")
+if providedCertificate == '':
+    certificatePath = False
+else:
+    certificatePath = os.path.join(os.path.dirname(__file__), providedCertificate)
 
 # Do not change
 blacklistApi = pmgApiUrl + '/api2/json/quarantine/blacklist'
@@ -28,6 +33,7 @@ def main():
     print("1. User Whitelist and Blacklist")
     print("2. Global Whitelist and Blacklist")
     print("3. Both")
+    print("4. Custom Entry")
     
     choice = input("Enter your choice: ")
 
@@ -38,6 +44,8 @@ def main():
     elif choice == '3':
         importUserLists()
         importGlobalLists()
+    elif choice == '4':
+        addSpecificEntry()
     else:
         print("Invalid choice")
 
@@ -69,7 +77,7 @@ def loadFile():
     tree = ET.parse(xml_file)
     return tree.getroot()
 
-def importUserLists():
+def importXgUserLists():
     root = loadFile()
 
     data = root.find('objects')
@@ -101,9 +109,11 @@ def importUserLists():
             'whitelist': tempWhitelist,
             'blacklist': tempBlacklist
         })
-
+        
+    importUserLists(userLists)
+def importUserLists(userLists):
     ticket, csrf = login()
-
+    
     for user in userLists:
         if user['mail'] == None:
             print("Skipping user " + user['username'] + " because of missing mail address")
@@ -224,5 +234,33 @@ def loadWhoObjects():
     response = requests.get(api, verify=certificatePath, cookies={'PMGAuthCookie': ticket}, headers={'CSRFPreventionToken': csrf})
     print("Loading Who Objects...")
     return response.json()['data']
+
+def addSpecificEntry():
+    exit = True
+    
+    email = input("Enter the email address from user: ")
+    type = input("Enter the type (whitelist or blacklist): ")
+    
+    while(exit):
+        mail = input("Enter the mail address/domain you want to block/whitelist (*@domain.com, abc@domain.com): ")
+        
+        userLists = [
+            {
+                'username': 'custom.entry',
+                'mail': email,
+                'whitelist': [mail] if type == 'whitelist' else [],
+                'blacklist': [mail] if type == 'blacklist' else []
+            },
+        ]
+        
+        importUserLists(userLists)
+        
+        exit = input("Do you want to add another entry? (y/n): ")
+        if exit == 'n':
+            exit = False
+        
+    
+    # Go to main menu
+    main()
 
 main()
